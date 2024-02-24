@@ -1,0 +1,11 @@
+### API Planning😎 ###
+
+- Auth (Authenticate using email and password, Google Authentication also) 🪪
+- Foods (Getting foods based on ID) 😋
+- Restaurant (Get all) 🍽️
+- Menus (All and based on filter) ✌️
+- Order ✌️
+- Payments -> razorpay 🤑
+- Reviews 👯
+- User 👯
+- Images 📸
