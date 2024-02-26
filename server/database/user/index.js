@@ -14,6 +14,19 @@ const UserSchema = new mongoose.Schema(
     //UpdatedAt -> date when the user obj was recently updated at
   }
 );
+
+//Static method to check email & phno //we can reduce making 2 api call by this static
+UserSchema.statics.findByEmailAndPhone = async (email,phoneNumber) =>{
+  //check whether email exists
+  const checkUserByEmail = await UserModel.findOne({ email }); //{email}=> {email:email} similar one
+  const checkUserByPhone = await UserModel.findOne({ phoneNumber });
+
+  if (checkUserByEmail || checkUserByPhone) {
+    throw new Error("User Aldready Exist...!!!");
+  }
+  return false;//as user doesn't exist
+};
+
 //Convert to model
 export const UserModel = mongoose.model("Users", UserSchema);
 //inside "collection name"

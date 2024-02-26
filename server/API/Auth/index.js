@@ -1,6 +1,6 @@
 //Library
 import express from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 //Models
@@ -22,13 +22,7 @@ Router.post("/signup", async (req, res) => {
   try {
     const { email, password, fullname, phoneNumber } = req.body.credentials;
 
-    //check whether email exists
-    const checkUserByEmail = await UserModel.findOne({ email }); //{email}=> {email:email} similar one
-    const checkUserByPhone = await UserModel.findOne({ phoneNumber });
-
-    if (checkUserByEmail || checkUserByPhone) {
-      return res.json({ error: "User aldready exist!" });
-    }
+    await UserModel.findByEmailAndPhone(email,phoneNumber);//connected static fn in Auth index.js
 
     // hash th password (no direct storage of pw) -> once hashed then it cannot be decrypted, but you can compare it
     const bcryptSalt = await bcrypt.genSalt(8);
@@ -44,10 +38,12 @@ Router.post("/signup", async (req, res) => {
     const token = jwt.sign({ user: { fullname, email } }, "Zomato App"); //secret key to generate token // just adding fullname and email to send to client react
 
     //return the JWT token
-    return res.status(200).json({token , status:"Success!"});//200 ->sucsess
+    return res.status(200).json({token , status:"Success!"});//200 ->success
   } catch (error) {
     return res.status(500).json({ error: error.message }); //500 - internal server error
   }
 });
 
 export default Router;
+
+//use statics (UserModel.ourStatic()) and methods(checkUserByEmail.ourMethod()) in mongoose 
