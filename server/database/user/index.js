@@ -33,6 +33,21 @@ UserSchema.statics.findByEmailAndPhone = async ({email,phoneNumber}) =>{
   }
   return false;//as user doesn't exist
 };
+
+//static method to check by email and pw
+UserSchema.statics.findByEmailAndPassword = async ({email,password}) =>{
+  //check whether email exist of user
+  const user = await UserModel.findOne({ email });
+  if(!user) throw new Error ("User does not exist !!! ");
+  
+  //compare pw that is hashed
+  const doesPasswordMatch = await bcrypt.compare(password, user.password);
+
+  if(!doesPasswordMatch) throw new Error("Invalid password !!!");
+
+  return user;
+};
+
  //trick in mongoose 
 UserSchema.pre("save",function(next){//save -> method/fn triggered while creating //we use 'this' so use fn not arrow fn
   const user=this;
