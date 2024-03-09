@@ -31,6 +31,6 @@ zomato.get("/", (req, res) => res.json({ message: "Setup Success" }));
 
 //Listen to the port
 zomato.listen(4000, () =>
-  ConnectDB().then(() => console.log("Server is running 🚀 and DB connected 😊"))
+  ConnectDB().then(() => console.log("Server is running 🚀 and DB connected"))
   .catch(()=>console.log("Server is running, but DB connection failed 😐"))
 );

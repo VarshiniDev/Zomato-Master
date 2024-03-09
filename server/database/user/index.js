@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 //scheme
 const UserSchema = new mongoose.Schema(
   {
@@ -8,15 +10,20 @@ const UserSchema = new mongoose.Schema(
     address: [{ detail: { type: String }, for:{type:String} }], //not required while sign in and array as a user can have multiple address
     phoneNumber: [{ type: Number }],
   },
-  {
+  { 
     timestamps: true,
     //createdAt -> date when the user obj was create
     //UpdatedAt -> date when the user obj was recently updated at
   }
 );
 
+//create a method that will create a json token - json generate token should be global (as we use json token for so many routes)
+UserSchema.methods.generateJwtToken = function(){
+  return jwt.sign({user:this._id.toString() },"ZomatoAPP");//_id:mongoose obj id ......do transaction with obj id.......this refers to user obj (current obj)
+};
+
 //Static method to check email & phno //we can reduce making 2 api call by this static
-UserSchema.statics.findByEmailAndPhone = async (email,phoneNumber) =>{
+UserSchema.statics.findByEmailAndPhone = async ({email,phoneNumber}) =>{
   //check whether email exists
   const checkUserByEmail = await UserModel.findOne({ email }); //{email}=> {email:email} similar one
   const checkUserByPhone = await UserModel.findOne({ phoneNumber });
@@ -26,6 +33,27 @@ UserSchema.statics.findByEmailAndPhone = async (email,phoneNumber) =>{
   }
   return false;//as user doesn't exist
 };
+ //trick in mongoose 
+UserSchema.pre("save",function(next){//save -> method/fn triggered while creating //we use 'this' so use fn not arrow fn
+  const user=this;
+
+  //mongoose have series of fns runned behind the scenes
+
+  //password is modified
+  if(!user.isModified("password"))return next();
+  //geeraye bcrypt salt
+  bcrypt.genSalt(8,(error,salt)=>{//since its a async fn it takes 8 & generates salt the (error,salt) fn will be called
+    //if error occuring it returns to next fn with error
+    if(error) return next(error);
+    //if it is successful then rehash the pw
+    bcrypt.hash(user.password,salt,(error,hash)=>{
+      if(error) return next(error);
+      //assigning the hashed password
+      user.password=hash;
+      return next();
+    })
+  })
+});//.pre -> run a fn in certain state of mongoose transaction like pushing data to mongodb or etc 
 
 //Convert to model
 export const UserModel = mongoose.model("Users", UserSchema);

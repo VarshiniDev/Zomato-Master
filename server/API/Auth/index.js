@@ -9,9 +9,10 @@ import { UserModel } from "../../database/user"; //{} destructuring it bcoz we a
 //setup router
 const Router = express.Router();
 
-/* Description of the route
+/* 
+Description of the route
 Route     /signup
-Des       Signup with email and password
+Des       Register new user
 Params    none
 Access    Public
 Method    Post
@@ -20,30 +21,26 @@ Method    Post
 //Signup route
 Router.post("/signup", async (req, res) => {
   try {
-    const { email, password, fullname, phoneNumber } = req.body.credentials;
+    await UserModel.findByEmailAndPhone(req.body.credentials); //connected static fn in Auth index.js
 
-    await UserModel.findByEmailAndPhone(email,phoneNumber);//connected static fn in Auth index.js
-
-    // hash th password (no direct storage of pw) -> once hashed then it cannot be decrypted, but you can compare it
-    const bcryptSalt = await bcrypt.genSalt(8);
-    const hashedPassword = await bcrypt.hash(password, bcryptSalt);
+    // hash the password (no direct storage of pw) -> once hashed then it cannot be decrypted, but you can compare it
+    //const bcryptSalt = await bcrypt.genSalt(8);
+    //const hashedPassword = await bcrypt.hash(password, bcryptSalt);
 
     //save to DB
-    await UserModel.create({
-      ...req.body.credentials,
-      password: hashedPassword,
-    });
+    const newUser = await UserModel.create(req.body.credentials );
 
     //generate JWT auth token (new user)
-    const token = jwt.sign({ user: { fullname, email } }, "Zomato App"); //secret key to generate token // just adding fullname and email to send to client react
+    const token = newUser.generateJwtToken(); //jwt.sign({ user: { fullname, email } }, "ZomatoAPP"); //secret key to generate token // just adding fullname and email to send to client react
 
     //return the JWT token
-    return res.status(200).json({token , status:"Success!"});//200 ->success
+    return res.status(200).json({ token, status: "Success!" }); //200 ->success
   } catch (error) {
     return res.status(500).json({ error: error.message }); //500 - internal server error
   }
 });
 
+
 export default Router;
 
-//use statics (UserModel.ourStatic()) and methods(checkUserByEmail.ourMethod()) in mongoose 
+//use statics (UserModel.ourStatic()) and methods(checkUserByEmail.ourMethod()) in mongoose
