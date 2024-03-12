@@ -2,6 +2,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import passport from "passport";
+
 
 //Models
 import { UserModel } from "../../database/user"; //{} destructuring it bcoz we are just exporting it but not doing export default there
@@ -28,7 +30,7 @@ Router.post("/signup", async (req, res) => {
     //const hashedPassword = await bcrypt.hash(password, bcryptSalt);
 
     //save to DB
-    const newUser = await UserModel.create(req.body.credentials );
+    const newUser = await UserModel.create(req.body.credentials);
 
     //generate JWT auth token (new user)
     const token = newUser.generateJwtToken(); //jwt.sign({ user: { fullname, email } }, "ZomatoAPP"); //secret key to generate token // just adding fullname and email to send to client react
@@ -52,7 +54,7 @@ Method    Post
 //signin route
 Router.post("/signin", async (req, res) => {
   try {
-    const user =await UserModel.findByEmailAndPassword(req.body.credentials); 
+    const user = await UserModel.findByEmailAndPassword(req.body.credentials);
     const token = user.generateJwtToken();
     return res.status(200).json({ token, status: "Success!" });
   } catch (error) {
@@ -60,6 +62,40 @@ Router.post("/signin", async (req, res) => {
   }
 });
 
+/* 
+Description of the route
+Route     /google
+Des       Google Signin
+Params    none
+Access    Public
+Method    Post
+*/
+Router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: [
+      //scope is permission of what exactly we need from google
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+    ],
+  })
+);
+
+/* 
+Description of the route (what happens after authentication)
+Route     /google/callback
+Des       Google Signin Callback
+Params    none
+Access    Public
+Method    Post
+*/
+Router.get(
+  "/google/callback",
+  passport.authenticate("google", {failureRedirect: "/" }),
+  (req, res) => {
+    return res.json({ token: req.session.passport.user.token });//passport will set a default expiration time
+  }
+);
 
 export default Router;
 
