@@ -2,15 +2,15 @@
 import express from "express";
 import passport from "passport";
 // Database Model
-import { FoodModel } from "../../database/allModel";
+import { FoodModel } from "../../database/allModels";
 
 // Validation
-import { ValidateRestaurantId, Validatecategory } from "../../validation/food";
+//import { ValidateRestaurantId, Validatecategory } from "../../validation/food";
 
 
 const Router = express.Router();
 
-
+/*
 
 // @Route   POST /foods/new
 // @des     add new food record to database
@@ -23,7 +23,7 @@ Router.post("/new", passport.authenticate("jwt"), async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-});
+});*/
 
 /*
 Route    /r  -> r stands for restaurants
@@ -34,17 +34,15 @@ Method   GET
 */
 Router.get("/r/:_id", async (req, res) => {
   try {
-    await ValidateRestaurantId(req.params);
+    //await ValidateRestaurantId(req.params);
 
     const { _id } = req.params;
-    const foods = await FoodModel.find({ restaurant: _id })
+    const foods = await FoodModel.find({ restaurant: _id });
     return res.json({ foods })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    return res.status(500).json({ error: error.message })
   }
 });
-
-
 
 /*
 Route    /c 
@@ -63,7 +61,7 @@ Router.get("/r/:category", async (req, res) => {
     });
     return res.json({ foods })
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    return res.status(500).json({ error: error.message })
   }
 });
 
