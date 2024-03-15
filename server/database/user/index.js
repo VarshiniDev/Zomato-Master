@@ -71,5 +71,5 @@ UserSchema.pre("save",function(next){//save -> method/fn triggered while creatin
 });//.pre -> run a fn in certain state of mongoose transaction like pushing data to mongodb or etc 
 
 //Convert to model
-export const UserModel = mongoose.model("Users", UserSchema);
+export const UserModel = mongoose.model("Users", UserSchema);//as we dont export default we have to destructure it while importing it
 //inside "collection name"

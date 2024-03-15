@@ -13,6 +13,7 @@ import passport from "passport";
 
 //microsevice route (importing micro services)
 import Auth from "./API/Auth"; // no need to specify index.js it will automatically get it
+import Restaurant from "./API/Restaurant";
 
 //Database Connection
 import ConnectDB from "./database/connection";
@@ -43,9 +44,13 @@ googleAuthConfig(passport);
 
 //Application routes(prefixing it with auth route)
 zomato.use("/auth", Auth);
+zomato.use("/restaurant",Restaurant);
 
 //Testing route
 zomato.get("/", (req, res) => res.json({ message: "Setup Success" }));
+
+//logging the client id where i get that id in terminal (eg for us we get :750776168789-9dav69kavct3hk7qg89r04hqblfm9c07.apps.googleusercontent.com)
+console.log(process.env.GOOGLE_CLIENT_ID);
 
 //Listen to the port
 zomato.listen(4000, () =>

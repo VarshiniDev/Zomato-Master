@@ -1,6 +1,6 @@
 ### API Planning😎 ###
 
-- Auth (Authenticate using email and password, Google Authentication also) 🪪
+- Auth (Authenticate using email and password, Google Authentication also) 🪪 
 - Foods (Getting foods based on ID) 😋
 - Restaurant (Get all) 🍽️
 - Menus (All and based on filter) ✌️
