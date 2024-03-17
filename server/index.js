@@ -15,7 +15,8 @@ import passport from "passport";
 import Auth from "./API/Auth"; // no need to specify index.js it will automatically get it
 import Restaurant from "./API/Restaurant";
 import Food from "./API/Food";
-import Menu from "./API/Menu";
+//import Menu from "./API/Menu";
+import Image from "./API/Image";
 
 //Database Connection
 import ConnectDB from "./database/connection";
@@ -48,7 +49,8 @@ googleAuthConfig(passport);
 zomato.use("/auth", Auth);
 zomato.use("/restaurant",Restaurant);
 zomato.use("/food",Food);
-zomato.use("/menu",Menu);
+//zomato.use("/menu",Menu);
+zomato.use("/image",Image);
 
 //Testing route
 zomato.get("/", (req, res) => res.json({ message: "Setup Success" }));
