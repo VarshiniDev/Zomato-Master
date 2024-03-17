@@ -8,6 +8,9 @@ import passport from "passport";
 //Models
 import { UserModel } from "../../database/user"; //{} destructuring it bcoz we are just exporting it but not doing export default there
 
+//valiation 
+import { ValidateSignup, ValidateSignin } from "../../validation/auth";
+
 //setup router
 const Router = express.Router();
 
@@ -22,7 +25,9 @@ Method    Post
 
 //Signup route
 Router.post("/signup", async (req, res) => {
+
   try {
+    await ValidateSignup(req.body.credentials);
     await UserModel.findByEmailAndPhone(req.body.credentials); //connected static fn in Auth index.js
 
     // hash the password (no direct storage of pw) -> once hashed then it cannot be decrypted, but you can compare it
@@ -54,6 +59,9 @@ Method    Post
 //signin route
 Router.post("/signin", async (req, res) => {
   try {
+    //auth.js
+    await ValidateSignin(req.body.credentials);
+    
     const user = await UserModel.findByEmailAndPassword(req.body.credentials);
     const token = user.generateJwtToken();
     return res.status(200).json({ token, status: "Success!" });
