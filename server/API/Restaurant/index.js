@@ -5,6 +5,13 @@ import passport from "passport";
 //Database modal
 import { RestaurantModel } from "../../database/allModels"; //../to get outof a folder
 
+//validation
+import {
+  ValidateRestaurantCity,
+  ValidateRestaurantSearchString,
+} from "../../validation/restaurant";
+import { ValidateRestaurantId } from "../../validation/food";
+
 //router setup
 const Router = express.Router();
 
@@ -19,6 +26,7 @@ Method    GET
 Router.get("/", async (req, res) => {
   //we use query parameter (....?key=ubhscbs)after qn mark what i have is a url query
   try {
+    await ValidateRestaurantCity(req.query);
     const { city } = req.query;
     const restaurants = await RestaurantModel.find({ city });
 
@@ -38,6 +46,7 @@ Method    GET
 */
 Router.get("/:_id", async (req, res) => {
   try {
+    await ValidateRestaurantId(req.params);
     const { _id } = req.params;
     const restaurant = await RestaurantModel.findOne(_id);
     if (!restaurant)
@@ -60,6 +69,7 @@ Method    GET
 */
 Router.get("/search", async (req, res) => {
   try {
+    await ValidateRestaurantSearchString(req.body);
     const { searchString } = req.body;
     //regex -> it has patterns like /*A-Z*/ , this is the language that compiler understands (hey compiler match this pattern and select them)
     const restaurants = await RestaurantModel.find({
