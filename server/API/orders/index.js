@@ -16,7 +16,7 @@ Method    GET
 */
 Router.get(
   "/:_id",
-  //passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
       const { _id } = req.params;
@@ -41,10 +41,10 @@ Params    _id
 Access    Public
 Method    POST  
 */
-Router.post("/new", //passport.authenticate("jwt"), 
+Router.post("/new", passport.authenticate("jwt"), 
 async (req, res) => {
   try {
-    const { _id } = req.params;//session.passport.user._doc;
+    const { _id } = req.session.passport.user._doc;;//req.params
     const { orderDetails } = req.body;
 
     const addNewOrder = await OrderModel.findOneAndUpdate(

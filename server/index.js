@@ -25,6 +25,7 @@ import ConnectDB from "./database/connection";
 
 //import configs
 import googleAuthConfig from "./config/google.config";
+import routeConfig from "./config/route.config";
 
 const zomato = express();
 
@@ -46,6 +47,7 @@ zomato.use(passport.session());
 
 //passport configuration
 googleAuthConfig(passport);
+routeConfig(passport);
 
 //Application routes(prefixing it with auth route)
 zomato.use("/auth", Auth);
