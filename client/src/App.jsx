@@ -79,4 +79,4 @@ export default App;
 // nightlife
 // nutrition
 
-// master -> type
+// master -> type ->url parameter
